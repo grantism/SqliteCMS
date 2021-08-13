@@ -3,6 +3,35 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+/**
+ * TODO: things to figure out:
+ * how to handle text & varchar & max or min length?
+   * how to handle RTE or markdown (https://simplemde.com/)?
+ * how to handle setting one to many fk relationships?
+ * data validation.
+ * data tidying before entry (use PDO instead).
+ *
+ * add ability to export SQL statements for all tables & data.
+ * add ability to track update statements & export only those after the last export.
+ * add ability to export sqllite file.
+ *
+ */
+
+/**
+ * All single line input columns should have type "VARCHAR". multi line "TEXT". THis allows distingui
+ */
+
+
+require_once 'class/database.php';
+require_once 'class/util.php';
+require_once 'class/textInput.php';
+
+//$pageParam = Util::ifx($_GET, 'page', 'tables');
+$tableNameParam = Util::ifx($_GET, 'table');
+$actionParam = Util::ifx($_GET, 'action');
+$resultParam = Util::ifx($_GET, 'result');
+$idParam = Util::ifx($_GET, 'id');
+
 ?>
     <!doctype html>
     <html lang="en" class="h-100">
@@ -27,6 +56,37 @@ error_reporting(E_ALL);
                 crossorigin="anonymous"></script>
 
 
+        <style>
+            tbody tr:hover {
+                background-color: lightgray;
+                cursor: pointer;
+            }
+
+            input, select {
+                width: 400px;
+                height: 40px;
+            }
+            textarea {
+                width: 400px;
+                height: 80px;
+            }
+
+            .container {
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+
+            .row.form {
+                margin: 10px;
+            }
+
+            .alert-success, .alert-warning {
+                padding: 20px;
+                margin-top: 12px;
+                margin-bottom: 12px;
+            }
+        </style>
+
     </head>
     <body class="">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -41,5 +101,42 @@ error_reporting(E_ALL);
         </div>
     </nav>
 
+    <?php
+    if ($resultParam):
+        ?>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-6 alert alert-success text-center" role="alert">
+                    Successfully <?php echo $resultParam; ?>
+                </div>
+            </div>
+        </div>
+    <?php
+    endif;
+    ?>
+
+    <?php
+    if ($tableNameParam && in_array($actionParam, array(Action::Add, Action::Edit))) {
+        require_once 'page/addRow.php';
+    } else if ($tableNameParam && $actionParam == Action::Delete) {
+        require_once 'page/deleteRow.php';
+    } else if ($tableNameParam) {
+        require_once 'page/rows.php';
+    } else {
+        require_once 'page/tables.php';
+    }
+    ?>
     </body>
     </html>
+
+<?php
+
+abstract class Action
+{
+    const Add = 'add';
+    const Edit = 'edit';
+    const Delete = 'delete';
+    const Saved = 'saved';
+}
+
+?>
