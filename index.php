@@ -3,28 +3,11 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-/**
- * TODO: things to figure out:
- * how to handle text & varchar & max or min length?
-   * how to handle RTE or markdown (https://simplemde.com/)?
- * how to handle setting one to many fk relationships?
- * data validation.
- * data tidying before entry (use PDO instead).
- *
- * add ability to export SQL statements for all tables & data.
- * add ability to track update statements & export only those after the last export.
- * add ability to export sqllite file.
- *
- */
-
-/**
- * All single line input columns should have type "VARCHAR". multi line "TEXT". THis allows distingui
- */
-
-
 require_once 'class/database.php';
 require_once 'class/util.php';
-require_once 'class/textInput.php';
+require_once 'class/ui/textInput.php';
+require_once 'class/ui/textArea.php';
+require_once 'class/ui/dropdown.php';
 
 //$pageParam = Util::ifx($_GET, 'page', 'tables');
 $tableNameParam = Util::ifx($_GET, 'table');
@@ -54,7 +37,6 @@ $idParam = Util::ifx($_GET, 'id');
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
                 integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
                 crossorigin="anonymous"></script>
-
 
         <style>
             tbody tr:hover {
