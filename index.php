@@ -4,16 +4,21 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once 'class/database.php';
+require_once 'class/log.php';
 require_once 'class/util.php';
 require_once 'class/ui/textInput.php';
 require_once 'class/ui/textArea.php';
 require_once 'class/ui/dropdown.php';
 
-//$pageParam = Util::ifx($_GET, 'page', 'tables');
+$exportParam = Util::ifx($_GET, 'export');
 $tableNameParam = Util::ifx($_GET, 'table');
 $actionParam = Util::ifx($_GET, 'action');
 $resultParam = Util::ifx($_GET, 'result');
 $idParam = Util::ifx($_GET, 'id');
+
+
+$db = new Database();
+$logDao = new LogChanges($db);
 
 ?>
     <!doctype html>
@@ -21,7 +26,7 @@ $idParam = Util::ifx($_GET, 'id');
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
+        <meta name="description" content="A basic CMS for use with BDI mobile applications.">
         <meta name="author" content="Grant McNally">
         <title>BDI ² CMS</title>
 
@@ -48,6 +53,7 @@ $idParam = Util::ifx($_GET, 'id');
                 width: 400px;
                 height: 40px;
             }
+
             textarea {
                 width: 400px;
                 height: 80px;
@@ -73,13 +79,8 @@ $idParam = Util::ifx($_GET, 'id');
     <body class="">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">BDI ² CMS</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            </div>
+            <a class="navbar-brand" href="index.php">BDI ² CMS</a>
+            <button class="btn btn-primary" type="button" onclick="window.location='index.php?export=<?php echo Export::Home; ?>'">Export</button>
         </div>
     </nav>
 
@@ -104,6 +105,8 @@ $idParam = Util::ifx($_GET, 'id');
         require_once 'page/deleteRow.php';
     } else if ($tableNameParam) {
         require_once 'page/rows.php';
+    } else if ($exportParam && in_array($exportParam, array(Export::Home, Export::All))) {
+        require_once 'page/export.php';
     } else {
         require_once 'page/tables.php';
     }
@@ -120,5 +123,13 @@ abstract class Action
     const Delete = 'delete';
     const Saved = 'saved';
 }
+
+
+abstract class Export
+{
+    const Home = 'home';
+    const All = 'all';
+}
+
 
 ?>

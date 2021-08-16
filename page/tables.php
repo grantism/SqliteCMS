@@ -28,7 +28,7 @@ $dbTables = $db->getTables();
     <table class="table table-striped">
         <thead>
         <th>Name</th>
-        <th>Description</th>
+<!--        <th>Description</th>-->
         </thead>
         <tbody>
         <?php
@@ -38,7 +38,7 @@ $dbTables = $db->getTables();
                 ?>
                 <tr onclick="window.location='index.php?table=<?php echo $tableName; ?>'">
                     <td><?php echo $tableName; ?></td>
-                    <td>SQLite does not allow table descriptions.</td>
+<!--                    <td>SQLite does not allow table descriptions.</td>-->
                 </tr>
             <?php endforeach;
         endif;

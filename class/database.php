@@ -27,7 +27,8 @@ class Database
             "SELECT * 
                 FROM sqlite_master
                 WHERE type = 'table'
-                    AND name NOT LIKE '%sqlite%' 
+                    AND name NOT LIKE '%sqlite%'
+                    AND name NOT LIKE '%".LogChanges::$updateTableName."%'
                 ORDER BY name;"
         );
 
@@ -38,7 +39,7 @@ class Database
      * @param string $name
      * @return array
      */
-    public function getTable(string $name): array
+    public function getTable(string $name): ?array
     {
         $result = $this->db->query(
             "SELECT * 
@@ -54,7 +55,7 @@ class Database
      * @param string $tableName
      * @return array|null
      */
-    public function getForeignKeys(string $tableName)
+    public function getForeignKeys(string $tableName): ?array
     {
         $result = $this->db->query("PRAGMA foreign_key_list($tableName);");
         return $this->fetchAllRows($result);
@@ -64,17 +65,17 @@ class Database
      * @param $tableName
      * @return array
      */
-    public function getColumns($tableName): array
+    public function getColumns($tableName): ?array
     {
         $result = $this->db->query("PRAGMA table_info($tableName);");
         return $this->fetchAllRows($result);
     }
 
     /**
-     * @param $tableName
+     * @param string $tableName
      * @return ?string
      */
-    public function getPrimaryKey($tableName): ?string
+    public function getPrimaryKey(string $tableName): ?string
     {
         $result = $this->db->query("PRAGMA table_info($tableName);");
         $columns = $this->fetchAllRows($result);
@@ -87,11 +88,11 @@ class Database
     }
 
     /**
-     * @param $tableName
+     * @param string $tableName
      * @param int $mode
      * @return array|null
      */
-    public function getAllRows($tableName, $mode = SQLITE3_ASSOC): ?array
+    public function getAllRows(string $tableName, int $mode = SQLITE3_ASSOC): ?array
     {
         $result = $this->db->query(
             "SELECT * 
@@ -116,7 +117,7 @@ class Database
      * @param int $mode
      * @return array|null
      */
-    private function fetchAllRows(SQLite3Result $result, int $mode = SQLITE3_ASSOC): ?array
+    public function fetchAllRows(SQLite3Result $result, int $mode = SQLITE3_ASSOC): ?array
     {
         $rows = array();
         while ($row = $result->fetchArray($mode)) {
@@ -130,12 +131,11 @@ class Database
     /**
      * @param SQLite3Result $result
      * @param int $mode
-     * @return mixed
+     * @return array|false
      */
     private function fetchOneRow(SQLite3Result $result, int $mode = SQLITE3_ASSOC)
     {
-        $row = $result->fetchArray($mode);
-        return $row;
+        return $result->fetchArray($mode);
     }
 
 
@@ -151,7 +151,9 @@ class Database
         $sql .= implode(',', $values);
         $sql .= ')';
 
-        $this->db->exec($sql);
+        if ($this->db->exec($sql)) {
+            $this->logChange($sql);
+        }
     }
 
     public function update($tableName, $primaryKey, $primaryKeyValue, $data)
@@ -166,17 +168,20 @@ class Database
         }
 
         $sql = 'UPDATE ' . $tableName . ' SET ' . implode(', ', $updateData) . ' WHERE ' . $primaryKey . '=' . $primaryKeyValue;
-        $this->db->exec($sql);
+
+        if ($this->db->exec($sql)) {
+            $this->logChange($sql);
+        }
     }
 
     public function delete($tableName, $primaryKey, $primaryKeyValue)
     {
         $sql = 'DELETE FROM ' . $tableName . ' WHERE ' . $primaryKey . '=' . $primaryKeyValue;
 
-        $this->db->exec($sql);
+        if ($this->db->exec($sql)) {
+            $this->logChange($sql);
+        }
     }
-
-    //TODO: this is crap, use PDO instead.
 
     /**
      * @param array $data
@@ -188,7 +193,7 @@ class Database
             if (is_numeric($v) || is_bool($v)) {
                 $data[$k] = $v;
             } else {
-                $data[$k] = '"' . $v . '"';
+                $data[$k] = "'" . SQLite3::escapeString($v) . "'";
             }
         }
 
@@ -196,4 +201,13 @@ class Database
     }
 
 
+    private function logChange(string $query)
+    {
+        $this->db->query(
+            "INSERT INTO " . LogChanges::$updateTableName . "
+                (query)
+            VALUES
+                ('" . SQLite3::escapeString($query) . "')"
+        );
+    }
 }
