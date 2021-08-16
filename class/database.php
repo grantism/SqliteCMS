@@ -193,7 +193,12 @@ class Database
             if (is_numeric($v) || is_bool($v)) {
                 $data[$k] = $v;
             } else {
-                $data[$k] = "'" . SQLite3::escapeString($v) . "'";
+                if (!$v) {
+                    $data[$k] = SQLite3::escapeString('NULL');
+                }
+                else {
+                    $data[$k] = "'" . SQLite3::escapeString($v) . "'";
+                }
             }
         }
 

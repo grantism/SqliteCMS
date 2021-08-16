@@ -22,7 +22,7 @@ class Dropdown
     public function __toString(): string
     {
         $select = '<select name="' . $this->name . '">';
-        $select .= '<option value="0">&mdash; Please select an option &mdash;</option>';
+        $select .= '<option value="">&mdash; Please select an option &mdash;</option>';
 
         foreach ($this->options as $option) {
             $value = $option[0];
