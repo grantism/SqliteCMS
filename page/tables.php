@@ -7,7 +7,8 @@ $db = new Database();
     <div class="row">
         <div class="col-12">
             <p>Welcome to BDI ² (Black Dog Institutes, Basic Data Interactor).</p>
-            <p>This tool is designed to make it easier to create and manage the content used in the numerous BDI mobile applications.</p>
+            <p>This tool is designed to make it easier to create and manage the content used in the numerous BDI mobile
+                applications.</p>
         </div>
     </div>
 </div>
@@ -27,8 +28,7 @@ $dbTables = $db->getTables();
 <div class="container">
     <table class="table table-striped">
         <thead>
-        <th>Name</th>
-<!--        <th>Description</th>-->
+            <th>Name</th>
         </thead>
         <tbody>
         <?php
@@ -38,7 +38,6 @@ $dbTables = $db->getTables();
                 ?>
                 <tr onclick="window.location='index.php?table=<?php echo $tableName; ?>'">
                     <td><?php echo $tableName; ?></td>
-<!--                    <td>SQLite does not allow table descriptions.</td>-->
                 </tr>
             <?php endforeach;
         endif;

@@ -68,7 +68,7 @@ class ColumnType
                     if ($isForeignKey) {
                         echo new Dropdown($columnName, $foreignKeyRows, $columnValue);
                     } else if ($columnType == ColumnType::VARCHAR) {
-                        echo new TextInput($columnName, $columnValue);
+                        echo new TextArea($columnName, $columnValue);
                     } else if ($columnType == ColumnType::INTEGER) {
                         echo new TextInput($columnName, $columnValue, 'number');
                     } else if ($columnType == ColumnType::TEXT) {
