@@ -50,12 +50,12 @@ $logDao = new LogChanges($db);
             }
 
             input, select {
-                width: 400px;
+                width: 100%;
                 height: 40px;
             }
 
             textarea {
-                width: 400px;
+                width: 100%;
                 height: 80px;
             }
 
@@ -73,6 +73,11 @@ $logDao = new LogChanges($db);
                 margin-top: 12px;
                 margin-bottom: 12px;
             }
+
+            .CodeMirror, .CodeMirror-scroll {
+                min-height: 100px !important;
+            }
+
         </style>
 
     </head>
