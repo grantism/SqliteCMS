@@ -110,7 +110,7 @@ $logDao = new LogChanges($db);
         require_once 'page/deleteRow.php';
     } else if ($tableNameParam) {
         require_once 'page/rows.php';
-    } else if ($exportParam && in_array($exportParam, array(Export::Home, Export::All))) {
+    } else if ($exportParam && in_array($exportParam, array(Export::Home, Export::AllData, Export::AllChanges))) {
         require_once 'page/export.php';
     } else {
         require_once 'page/tables.php';
@@ -133,7 +133,8 @@ abstract class Action
 abstract class Export
 {
     const Home = 'home';
-    const All = 'all';
+    const AllData = 'allData';
+    const AllChanges = 'allChanges';
 }
 
 

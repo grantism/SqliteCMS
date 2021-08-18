@@ -127,7 +127,6 @@ class Database
         return (count($rows) > 0) ? $rows : null;
     }
 
-
     /**
      * @param SQLite3Result $result
      * @param int $mode
@@ -138,18 +137,9 @@ class Database
         return $result->fetchArray($mode);
     }
 
-
     public function insert($tableName, $data)
     {
-        $keys = array_keys($data);
-        $values = $this->prepareInsertValues(array_values($data));
-
-        $sql = 'INSERT INTO ' . $tableName . '(';
-        $sql .= implode(',', $keys);
-        $sql .= ')';
-        $sql .= ' VALUES(';
-        $sql .= implode(',', $values);
-        $sql .= ')';
+        $sql = $this->prepareInsertQuery($tableName, $data);
 
         if ($this->db->exec($sql)) {
             $this->logChange($sql);
@@ -158,16 +148,8 @@ class Database
 
     public function update($tableName, $primaryKey, $primaryKeyValue, $data)
     {
-        $keys = array_keys($data);
-        $values = $this->prepareInsertValues(array_values($data));
 
-        $data = array_combine($keys, $values);
-        $updateData = array();
-        foreach ($data as $key => $value) {
-            $updateData[] = $key . '=' . $value;
-        }
-
-        $sql = 'UPDATE ' . $tableName . ' SET ' . implode(', ', $updateData) . ' WHERE ' . $primaryKey . '=' . $primaryKeyValue;
+        $sql = $this->prepareUpdateQuery($tableName, $data, $primaryKey, $primaryKeyValue);
 
         if ($this->db->exec($sql)) {
             $this->logChange($sql);
@@ -181,6 +163,35 @@ class Database
         if ($this->db->exec($sql)) {
             $this->logChange($sql);
         }
+    }
+
+    private function prepareInsertQuery($tableName, $data): string
+    {
+        $columns = array_keys($data);
+        $values = $this->prepareInsertValues(array_values($data));
+
+        $sql = 'INSERT INTO ' . $tableName . '(';
+        $sql .= implode(', ', $columns);
+        $sql .= ')';
+        $sql .= ' VALUES(';
+        $sql .= implode(', ', $values);
+        $sql .= ')';
+
+        return $sql;
+    }
+
+    private function prepareUpdateQuery($tableName, $data, $whereKey, $whereValue): string
+    {
+        $keys = array_keys($data);
+        $values = $this->prepareInsertValues(array_values($data));
+
+        $data = array_combine($keys, $values);
+        $updateData = array();
+        foreach ($data as $key => $value) {
+            $updateData[] = $key . '=' . $value;
+        }
+
+        return 'UPDATE ' . $tableName . ' SET ' . implode(', ', $updateData) . ' WHERE ' . $whereKey . '=' . $whereValue;
     }
 
     /**
@@ -214,5 +225,24 @@ class Database
             VALUES
                 ('" . SQLite3::escapeString($query) . "')"
         );
+    }
+
+
+    public function getAllInserts(): array
+    {
+        $inserts = array();
+        $tables = $this->getTables();
+        foreach ($tables as $table) {
+            $tableName = $table['name'];
+            if ($rows = $this->getAllRows($tableName)) {
+
+                foreach ($rows as $row) {
+                    $inserts[] = $this->prepareInsertQuery($tableName, $row);
+                }
+            }
+        }
+
+        return $inserts;
+
     }
 }

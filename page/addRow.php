@@ -108,7 +108,7 @@ class ColumnType
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 <script>
-    //loop through each text area and turn into amarkup input.
+    //loop through each text area and turn into markup input.
     [...document.getElementsByTagName('textArea')].forEach((element) => {
         const simplemde = new SimpleMDE({
             element: element,
