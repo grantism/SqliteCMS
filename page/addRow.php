@@ -7,14 +7,12 @@ $tableUrl = "index.php?table=$tableNameParam";
 <div class="container">
     <div class="row">
         <div class="col-12">
-            <h1><a href="index.php">Tables</a> > <a href="<?php echo $tableUrl; ?>"><?php echo $tableNameParam; ?></a> >
-                Add row</h1>
+            <h1><a href="index.php">Tables</a>  &rarr;  <a href="<?php echo $tableUrl; ?>"><?php echo $tableNameParam; ?></a> &rarr; Add row</h1>
         </div>
     </div>
 </div>
 
 <?php
-
 
 if ($_POST) {
     require_once 'saveRow.php';

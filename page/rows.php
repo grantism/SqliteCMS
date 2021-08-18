@@ -6,7 +6,7 @@ $db = new Database();
 <div class="container">
     <div class="row">
         <div class="col-12">
-            <h1><a href="index.php">Tables</a> > <?php echo $tableNameParam; ?></h1>
+            <h1><a href="index.php">Tables</a> &rarr; <?php echo $tableNameParam; ?></h1>
             Below is a list of all the items currently in the <?php echo $tableNameParam; ?> table.
         </div>
     </div>
