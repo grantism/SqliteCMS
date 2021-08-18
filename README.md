@@ -1,16 +1,15 @@
 # BDI ² CMS (Black Dog Institutes, Basic Data Interactor)
 
-* Single line input should be declared as type `varchar`. Multiline as `text`. This will help distinguish input types.
+This is a very simple CMS system that can open any SQLite database file and allow users to insert, edit and delete rows from it.
+Simply replace `/db/app_database.sqlite` with the desired database and away you go.
 
-## Todo:
-* how to handle text & varchar & max or min length?
-* how to handle RTE or markdown (https://simplemde.com/, https://github.com/sparksuite/simplemde-markdown-editor)?
-* how to handle setting one to many fk relationships?
-* data validation.
-* data tidying before entry (use PDO instead).
+##Exporting data
+Anytime a change is made to the database, the relevant query is stored in a table. All change queries can be exported by clicking `Export -> Export All Changes`.
+To simply export insert statements for all data currently in the database, click `Export -> Export All Data`.
 
-**Exporting seed data**
-* add ability to export SQL statements for all tables & data.
-* add ability to track update statements & export only those after the last export. Do this by adding all update statements to a table & marking with a version each time "export" is clicked.
-* add ability to export entire db file.
+
+##Notes
+* Due to limitations in Moor db, all text input fields are being displayed as markdown inputs.
+* There is currently no data validation before saving or deleting data.
+
 
